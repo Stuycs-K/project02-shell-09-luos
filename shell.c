@@ -1,6 +1,14 @@
 #include <stdio.h>
 #include <string.h>
 
+// cmds (will delete later, just here for reference):
+
+// int chdir(const char *path); || int chdir(int fd);
+// changes current working directory. either use the path name as a char array or use fd.
+
+// char * getcwd(char *buf, size_t size); || char * getcwd(char *buf);
+// 
+
 int LINE_SIZE = 100;
 
 int main() {
