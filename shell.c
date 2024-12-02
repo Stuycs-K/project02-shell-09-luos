@@ -10,11 +10,13 @@ int main() {
     for (int i = 0; i < LINE_SIZE; i++) {
       line[i] = 0;
     }
+    printf("$ ");
+
     if(fgets(line, LINE_SIZE, stdin) == NULL) {
       printf("%s\n", strerror(errno));
       return errno;
     }
-    if(strcmp(line, "quit") == 0) {
+    if(strcmp(line, "exit") == 0) {
       printf("QUIT");
       return 0;
     }
