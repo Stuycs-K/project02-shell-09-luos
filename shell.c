@@ -15,6 +15,7 @@ int main() {
     fflush(stdout);
 
     if(fgets(line, LINE_SIZE, stdin) == NULL) {
+      printf("exit\n");
       return errno;
     }
     // below: https://stackoverflow.com/questions/2693776/removing-trailing-newline-character-from-fgets-input
