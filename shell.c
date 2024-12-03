@@ -11,13 +11,13 @@ int main() {
       line[i] = 0;
     }
     printf("$ ");
+    fflush(stdout);
 
     if(fgets(line, LINE_SIZE, stdin) == NULL) {
       printf("%s\n", strerror(errno));
       return errno;
     }
-    if(strcmp(line, "exit") == 0) {
-      printf("QUIT");
+    if(strcmp(line, "exit\n") == 0) {
       return 0;
     }
   }
