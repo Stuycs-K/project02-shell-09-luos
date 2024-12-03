@@ -1,6 +1,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
+#include "command.h"
 
 int LINE_SIZE = 100;
 
@@ -14,11 +15,14 @@ int main() {
     fflush(stdout);
 
     if(fgets(line, LINE_SIZE, stdin) == NULL) {
-      printf("%s\n", strerror(errno));
       return errno;
     }
-    if(strcmp(line, "exit\n") == 0) {
+    // below: https://stackoverflow.com/questions/2693776/removing-trailing-newline-character-from-fgets-input
+    line[strcspn(line, "\n")] = 0;
+
+    if(strcmp(line, "exit") == 0) {
       return 0;
     }
+    parseCommands(line);
   }
 }
