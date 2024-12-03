@@ -1,8 +1,10 @@
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include "directory.h"
 
 // From Lab 11
 void parse_args(char *line, char **arg_ary) {
@@ -32,11 +34,15 @@ int parseCommands(char *line) {
       exit(1);
     }
     else if (p == 0) {
-      execvp(args[0], args);
+      if(notCD(args)) {
+        execvp(args[0], args);
+      } else {
+        exit(0);
+      }
     }
 
     int status = 0;
     wait(&status);
   }
-  return 0;
+  return errno;
 }
