@@ -11,7 +11,7 @@ int main() {
     for (int i = 0; i < LINE_SIZE; i++) {
       line[i] = 0;
     }
-    printf("$ ");
+    printf("[PLACEHOLDER] $ ");
     fflush(stdout);
 
     if(fgets(line, LINE_SIZE, stdin) == NULL) {
