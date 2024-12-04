@@ -1,6 +1,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 #include "command.h"
 
 int LINE_SIZE = 100;
@@ -11,7 +12,10 @@ int main() {
     for (int i = 0; i < LINE_SIZE; i++) {
       line[i] = 0;
     }
-    printf("[PLACEHOLDER] $ ");
+
+    char buffer[100];
+    getcwd(buffer, 100);
+    printf("%s $ ", buffer);
     fflush(stdout);
 
     if(fgets(line, LINE_SIZE, stdin) == NULL) {
