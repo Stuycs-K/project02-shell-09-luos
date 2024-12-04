@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include "commands.h"
 
-int LINE_SIZE = 100;
+#define LINE_SIZE 100
 
 int main() {
   char line[LINE_SIZE];
@@ -13,8 +13,8 @@ int main() {
       line[i] = 0;
     }
 
-    char buffer[100];
-    getcwd(buffer, 100);
+    char buffer[LINE_SIZE];
+    getcwd(buffer, LINE_SIZE);
     printf("%s $ ", buffer);
     fflush(stdout);
 

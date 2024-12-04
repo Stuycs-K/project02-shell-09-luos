@@ -27,6 +27,8 @@ int parseCommands(char *line) {
     char * args[16];
     parse_args(command, args);
 
+    checkRedirect(args[16], 16);
+
     pid_t p;
     p = fork();
     if (p < 0) {
