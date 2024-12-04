@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-#include "command.h"
+#include "commands.h"
 
 int LINE_SIZE = 100;
 

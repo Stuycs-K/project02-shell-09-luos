@@ -1,11 +1,11 @@
 .PHONY: compile clean
-compile shell: shell.o command.o directory.o
-	@gcc -o shell shell.o command.o directory.o
-shell.o: shell.c command.h
+compile shell: shell.o commands.o files.o
+	@gcc -o shell shell.o commands.o files.o
+shell.o: shell.c commands.h
 	@gcc -c shell.c
-command.o: command.c directory.h
-	@gcc -c command.c
-directory.o: directory.c
-	@gcc -c directory.c
+commands.o: commands.c files.h
+	@gcc -c commands.c
+files.o: files.c
+	@gcc -c files.c
 clean:
 	@rm -rf *.o shell

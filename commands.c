@@ -4,7 +4,7 @@
 #include <string.h>
 #include <sys/wait.h>
 #include <unistd.h>
-#include "directory.h"
+#include "files.h"
 
 // From Lab 11
 void parse_args(char *line, char **arg_ary) {
