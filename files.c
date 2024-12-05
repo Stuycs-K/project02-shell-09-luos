@@ -7,12 +7,21 @@
 
 #define LINE_SIZE 16
 
-int redirect(char *path, int inOut) {
-  int fd = open(path, O_WRONLY);
+void changeDir(char **args) {
+  int number = chdir(args[1]);
+  if(number < 0) {
+      perror("cd failed\n");
+      exit(-1);
+  }
+}
+
+int* redirect(char *path, int inOut) {
+  int descriptors[2];
+  descriptors[0] = open(path, O_WRONLY);
   int fileno = inOut;
-  int backup = dup(fileno);
-  dup2(fd, fileno);
-  return backup;
+  descriptors[1] = dup(fileno);
+  dup2(descriptors[0], fileno);
+  return descriptors;
 }
 
 int checkRedirect(char **arg_ary, int size) {

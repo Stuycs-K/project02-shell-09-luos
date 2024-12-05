@@ -6,28 +6,35 @@
 #include <unistd.h>
 #include "files.h"
 
-void parse_args(char *line, char **arg_ary) {
+int parse_args(char *line, char **arg_ary) {
   char *curr = line;
   char *buffer;
   int i = 0;
+  int redir = -1;
   while(curr != NULL) {
     buffer = strsep(&curr, " ");
-    if(strcmp(buffer, "<") == 0) {
-      arg_ary[i] = NULL;
-      // redirect(arg_ary[i+1]
+    if(redir != -1) {
+      int *fd = redirect(buffer, redir);
+      redir = -1;
+      return fd[1];
     }
-    arg_ary[i] = buffer;
+
+    if (strcmp(buffer, "<") == 0) {
+      arg_ary[i] = NULL;
+      redir = 0;
+    }
+    else if (strcmp(buffer, ">") == 0) {
+      arg_ary[i] = NULL;
+      redir = 1;
+    }
+
+    if(redir == -1) {
+      arg_ary[i] = buffer;
+    }
     i++;
   }
   arg_ary[i] = NULL;
-}
-
-void changeDir(char **args) {
-  int number = chdir(args[1]);
-  if(number < 0) {
-      perror("cd failed\n");
-      exit(-1);
-  }
+  return -1;
 }
 
 int parseCommands(char *line) {
@@ -36,7 +43,7 @@ int parseCommands(char *line) {
     command = strsep(&line, ";");
 
     char * args[16];
-    parse_args(command, args);
+    int backup = parse_args(command, args);
 
     pid_t p;
     p = fork();
@@ -55,6 +62,10 @@ int parseCommands(char *line) {
 
     int status = 0;
     wait(&status);
+
+    if(backup != -1) {
+      dup2(backup, 1);
+    }
   }
   return errno;
 }
