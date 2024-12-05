@@ -13,12 +13,6 @@ int parse_args(char *line, char **arg_ary) {
   int redir = -1;
   while(curr != NULL) {
     buffer = strsep(&curr, " ");
-    if(redir != -1) {
-      int *fd = redirect(buffer, redir);
-      redir = -1;
-      return fd[1];
-    }
-
     if (strcmp(buffer, "<") == 0) {
       arg_ary[i] = NULL;
       redir = 0;
