@@ -6,13 +6,19 @@
 #include <unistd.h>
 #include "files.h"
 
-int parse_args(char *line, char **arg_ary) {
+int* parse_args(char *line, char **arg_ary) {
   char *curr = line;
   char *buffer;
   int i = 0;
   int redir = -1;
   while(curr != NULL) {
     buffer = strsep(&curr, " ");
+
+    if(redir != -1) {
+      int* descrs = redirect(buffer, redir);
+      return descrs;
+    }
+
     if (strcmp(buffer, "<") == 0) {
       arg_ary[i] = NULL;
       redir = 0;
@@ -28,7 +34,7 @@ int parse_args(char *line, char **arg_ary) {
     i++;
   }
   arg_ary[i] = NULL;
-  return -1;
+  return NULL;
 }
 
 int parseCommands(char *line) {
@@ -37,7 +43,11 @@ int parseCommands(char *line) {
     command = strsep(&line, ";");
 
     char * args[16];
-    int backup = parse_args(command, args);
+    int* descrs = parse_args(command, args);
+
+    if(descrs != NULL) {
+      printf("DETECTED\n");
+    }
 
     pid_t p;
     p = fork();
@@ -56,10 +66,6 @@ int parseCommands(char *line) {
 
     int status = 0;
     wait(&status);
-
-    if(backup != -1) {
-      dup2(backup, 1);
-    }
   }
   return errno;
 }
