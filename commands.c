@@ -6,17 +6,28 @@
 #include <unistd.h>
 #include "files.h"
 
-// From Lab 11
 void parse_args(char *line, char **arg_ary) {
   char *curr = line;
   char *buffer;
   int i = 0;
   while(curr != NULL) {
     buffer = strsep(&curr, " ");
+    if(strcmp(buffer, "<") == 0) {
+      arg_ary[i] = NULL;
+      // redirect(arg_ary[i+1]
+    }
     arg_ary[i] = buffer;
     i++;
   }
   arg_ary[i] = NULL;
+}
+
+void changeDir(char **args) {
+  int number = chdir(args[1]);
+  if(number < 0) {
+      perror("cd failed\n");
+      exit(-1);
+  }
 }
 
 int parseCommands(char *line) {
@@ -27,8 +38,6 @@ int parseCommands(char *line) {
     char * args[16];
     parse_args(command, args);
 
-    checkRedirect(args[16], 16);
-
     pid_t p;
     p = fork();
     if (p < 0) {
@@ -36,10 +45,11 @@ int parseCommands(char *line) {
       exit(1);
     }
     else if (p == 0) {
-      if(notCD(args)) {
+      if(strcmp(args[0], "cd") == 0) {
+        changeDir(args);
+      }
+      else {
         execvp(args[0], args);
-      } else {
-        exit(0);
       }
     }
 
