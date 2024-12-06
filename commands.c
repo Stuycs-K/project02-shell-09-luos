@@ -18,15 +18,7 @@ int* parse_args(char *line, char **arg_ary) {
       int* descrs = redirect(buffer, redir);
       return descrs;
     }
-
-    if (strcmp(buffer, "<") == 0) {
-      arg_ary[i] = NULL;
-      redir = 0;
-    }
-    else if (strcmp(buffer, ">") == 0) {
-      arg_ary[i] = NULL;
-      redir = 1;
-    }
+    redir = checkRedirect(buffer, arg_ary, i);
 
     if(redir == -1) {
       arg_ary[i] = buffer;

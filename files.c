@@ -28,3 +28,15 @@ int* redirect(char *path, int redir) {
   descrs[1] = backup;
   return descrs;
 }
+
+int checkRedirect(char *buffer, char **arg_ary, int i) {
+  if (strcmp(buffer, "<") == 0) {
+    arg_ary[i] = NULL;
+    return 0;
+  }
+  else if (strcmp(buffer, ">") == 0) {
+    arg_ary[i] = NULL;
+    return 1;
+  }
+  return -1;
+}
