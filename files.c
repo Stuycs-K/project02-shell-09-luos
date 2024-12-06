@@ -14,7 +14,7 @@ void changeDir(char **args) {
 }
 
 int* redirect(char *path, int redir) {
-  int fd = open(path, O_RDWR | O_CREAT, 0650);
+  int fd = open(path, O_RDWR | O_CREAT | O_TRUNC, 0650);
   if (fd < 0) {
     perror("failed file open\n");
     exit(-1);
@@ -30,7 +30,10 @@ int* redirect(char *path, int redir) {
 }
 
 int checkRedirect(char *buffer, char **arg_ary, int i) {
-  if (strcmp(buffer, "<") == 0) {
+  if (strcmp(buffer, "|") == 0) {
+    return 2;
+  }
+  else if (strcmp(buffer, "<") == 0) {
     arg_ary[i] = NULL;
     return 0;
   }

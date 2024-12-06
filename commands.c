@@ -13,7 +13,6 @@ int* parse_args(char *line, char **arg_ary) {
   int redir = -1;
   while(curr != NULL) {
     buffer = strsep(&curr, " ");
-
     if(redir != -1) {
       int* descrs = redirect(buffer, redir);
       return descrs;
@@ -29,35 +28,58 @@ int* parse_args(char *line, char **arg_ary) {
   return NULL;
 }
 
+void exec(char **args) {
+  pid_t p;
+  p = fork();
+  if (p < 0) {
+    perror("fork failed");
+    exit(1);
+  }
+  else if (p == 0) {
+    if(strcmp(args[0], "cd") == 0) {
+      changeDir(args);
+    }
+    else {
+      execvp(args[0], args);
+    }
+  }
+
+  int status = 0;
+  wait(&status);
+}
+
 int parseCommands(char *line) {
   while(line != NULL) {
-    char * command;
-    command = strsep(&line, ";");
+    char * secondCommand;
+    secondCommand = strsep(&line, ";");
+
+    char * firstCommand;
+    // https://stackoverflow.com/questions/12784766/check-substring-exists-in-a-string-in-c
+    if(strstr(" | ", secondCommand) != NULL) {
+      firstCommand = strsep(&secondCommand, " | ");
+    }
+    else if(strstr("|", secondCommand) != NULL) {
+      firstCommand = strsep(&secondCommand, " | ");
+    }
+    else {
+      firstCommand = secondCommand;
+      secondCommand = NULL;
+    }
+
+    if(secondCommand != NULL) {
+      redirect("temp.txt", 1);
+    }
 
     char * args[16];
-    int* descrs = parse_args(command, args);
-
-    pid_t p;
-    p = fork();
-    if (p < 0) {
-      perror("fork failed");
-      exit(1);
-    }
-    else if (p == 0) {
-      if(strcmp(args[0], "cd") == 0) {
-        changeDir(args);
-      }
-      else {
-        execvp(args[0], args);
-      }
-    }
-
-    int status = 0;
-    wait(&status);
+    int* descrs = parse_args(firstCommand, args);
+    exec(args);
 
     if(descrs != NULL) {
       dup2(descrs[1], descrs[0]);
       free(descrs);
+    }
+    if(secondCommand != NULL) {
+      redirect("temp.txt", 0);
     }
   }
   return errno;
