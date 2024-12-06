@@ -45,10 +45,6 @@ int parseCommands(char *line) {
     char * args[16];
     int* descrs = parse_args(command, args);
 
-    if(descrs != NULL) {
-      printf("DETECTED\n");
-    }
-
     pid_t p;
     p = fork();
     if (p < 0) {
@@ -66,6 +62,11 @@ int parseCommands(char *line) {
 
     int status = 0;
     wait(&status);
+
+    if(descrs != NULL) {
+      dup2(descrs[1], descrs[0]);
+      free(descrs);
+    }
   }
   return errno;
 }

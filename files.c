@@ -14,13 +14,17 @@ void changeDir(char **args) {
 }
 
 int* redirect(char *path, int redir) {
-  int fd = open(path, O_WRONLY);
+  int fd = open(path, O_WRONLY | O_CREAT, 0650);
+  if (fd < 0) {
+    perror("failed file open\n");
+    exit(-1);
+  }
   int out = redir;
   int backup = dup(out);
   dup2(fd, out);
 
-  int descrs[2];
-  descrs[0] = fd;
-  descrs[1] = out;
+  int* descrs = malloc(2*sizeof(int));
+  descrs[0] = out;
+  descrs[1] = backup;
   return descrs;
 }
