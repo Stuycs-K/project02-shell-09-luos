@@ -14,7 +14,13 @@ void changeDir(char **args) {
 }
 
 int* redirect(char *path, int redir) {
-  int fd = open(path, O_RDWR | O_CREAT | O_TRUNC, 0650);
+  int fd = -1;
+  if (redir == 0) {
+    fd = open(path, O_RDONLY);
+  }
+  else if (redir == 1) {
+    fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0650);
+  }
   if (fd < 0) {
     perror("failed file open\n");
     exit(-1);

@@ -40,7 +40,6 @@ void exec(char **args) {
       changeDir(args);
     }
     else {
-      printf("%s %s\n", args[0], args[1]);
       execvp(args[0], args);
     }
   }
