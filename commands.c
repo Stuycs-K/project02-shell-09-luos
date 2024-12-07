@@ -40,6 +40,7 @@ void exec(char **args) {
       changeDir(args);
     }
     else {
+      printf("%s %s\n", args[0], args[1]);
       execvp(args[0], args);
     }
   }
@@ -50,10 +51,10 @@ void exec(char **args) {
 
 int parseCommands(char *line) {
   while(line != NULL) {
-    char * secondCommand;
+    char * secondCommand = NULL;
     secondCommand = strsep(&line, ";");
 
-    char * firstCommand;
+    char * firstCommand = NULL;
     // https://stackoverflow.com/questions/12784766/check-substring-exists-in-a-string-in-c
     if(strstr(secondCommand, " | ") != NULL) {
       firstCommand = strsep(&secondCommand, " | ");
@@ -67,7 +68,7 @@ int parseCommands(char *line) {
       secondCommand = NULL;
     }
 
-    int* pipeDescrs;
+    int* pipeDescrs = NULL;
     if(secondCommand != NULL) {
       pipeDescrs = redirect("temp.txt", 1);
     }
@@ -75,16 +76,27 @@ int parseCommands(char *line) {
     char * args[16];
     int* descrs = parse_args(firstCommand, args);
     exec(args);
-
     if(descrs != NULL) {
       dup2(descrs[1], descrs[0]);
-      free(descrs);
     }
-    if(secondCommand != NULL) {
-      dup2(pipeDescrs[1], pipeDescrs[0]);
+
+    // if(secondCommand != NULL) {
+    //   printf("%s\n", secondCommand);
+    //   pipeDescrs = redirect("temp.txt", 0);
+    //   printf("2 %d %d\n", pipeDescrs[0], pipeDescrs[1]);
+    //   descrs = parse_args(secondCommand, args);
+    //   exec(args);
+    //   if(descrs != NULL) {
+    //     dup2(descrs[1], descrs[0]);
+    //     free(descrs);
+    //   }
+    //   dup2(pipeDescrs[1], pipeDescrs[0]);
+    // }
+
+
+    if(pipeDescrs != NULL) {
       free(pipeDescrs);
     }
-    printf("HIT\n");
   }
   return errno;
 }
