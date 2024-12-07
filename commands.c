@@ -79,19 +79,17 @@ int parseCommands(char *line) {
       dup2(descrs[1], descrs[0]);
     }
 
-    // if(secondCommand != NULL) {
-    //   printf("%s\n", secondCommand);
-    //   pipeDescrs = redirect("temp.txt", 0);
-    //   printf("2 %d %d\n", pipeDescrs[0], pipeDescrs[1]);
-    //   descrs = parse_args(secondCommand, args);
-    //   exec(args);
-    //   if(descrs != NULL) {
-    //     dup2(descrs[1], descrs[0]);
-    //     free(descrs);
-    //   }
-    //   dup2(pipeDescrs[1], pipeDescrs[0]);
-    // }
-
+    if(secondCommand != NULL) {
+      dup2(pipeDescrs[1], pipeDescrs[0]);
+      pipeDescrs = redirect("temp.txt", 0);
+      descrs = parse_args(secondCommand, args);
+      exec(args);
+      if(descrs != NULL) {
+        dup2(descrs[1], descrs[0]);
+        free(descrs);
+      }
+      dup2(pipeDescrs[1], pipeDescrs[0]);
+    }
 
     if(pipeDescrs != NULL) {
       free(pipeDescrs);
