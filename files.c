@@ -30,10 +30,7 @@ int* redirect(char *path, int redir) {
 }
 
 int checkRedirect(char *buffer, char **arg_ary, int i) {
-  if (strcmp(buffer, "|") == 0) {
-    return 2;
-  }
-  else if (strcmp(buffer, "<") == 0) {
+  if (strcmp(buffer, "<") == 0) {
     arg_ary[i] = NULL;
     return 0;
   }
