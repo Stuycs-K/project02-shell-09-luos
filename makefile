@@ -8,4 +8,4 @@ commands.o: commands.c files.h
 files.o: files.c
 	@gcc -c files.c
 clean:
-	@rm -rf *.o shell temp.txt
+	@rm -rf *.o shell temp.txt temp1.txt tf3301.txt

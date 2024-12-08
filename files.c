@@ -6,7 +6,11 @@
 #include <unistd.h>
 
 void changeDir(char **args) {
-  int number = chdir(args[1]);
+  char *arg = args[1];
+  if(arg == NULL) {
+    arg = getenv("HOME");
+  }
+  int number = chdir(arg);
   if(number < 0) {
       perror("cd failed\n");
       exit(-1);

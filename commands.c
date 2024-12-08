@@ -69,7 +69,7 @@ int parseCommands(char *line) {
 
     int* pipeDescrs = NULL;
     if(secondCommand != NULL) {
-      pipeDescrs = redirect("temp.txt", 1);
+      pipeDescrs = redirect("tf3301.txt", 1);
     }
 
     char * args[16];
@@ -81,7 +81,7 @@ int parseCommands(char *line) {
 
     if(secondCommand != NULL) {
       dup2(pipeDescrs[1], pipeDescrs[0]);
-      pipeDescrs = redirect("temp.txt", 0);
+      pipeDescrs = redirect("tf3301.txt", 0);
       descrs = parse_args(secondCommand, args);
       exec(args);
       if(descrs != NULL) {
