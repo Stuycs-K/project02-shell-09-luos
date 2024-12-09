@@ -6,6 +6,13 @@ Steven Luo
 Zero One
 ## Features:
 ### Implemented:
+* General Functionality
+* Working Directory
+* Prompt
+* Exiting
+* Simple redirection
+* Pipes with no redirection and no arguments
 ### Attempted/Unsuccessful:
+* Pipes for every other cases
 ## Bugs:
 ## Headers:
