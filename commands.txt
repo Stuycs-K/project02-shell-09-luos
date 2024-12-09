@@ -1,0 +1,9 @@
+ls
+cd
+cowsay hello
+echo hello
+ls > temp.txt
+cat temp.txt
+cowsay < temp.txt
+ls -alh
+ls | cowsay
