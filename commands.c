@@ -6,6 +6,17 @@
 #include <unistd.h>
 #include "files.h"
 
+/**
+  Description:
+    Parses a line containing a command, arguments, and redirects,
+    placing the command + arguments into an array and automatically
+    redirecting stdin/stdout.
+  Parameters:
+    char* line - A string containing the command + arguments + redirection mechanism.
+    char** arg_ary - The array that stores the initial command + arguments.
+  Returns:
+    The file descriptors of the redirected stdin/stdout, or NULL if not redirected.
+*/
 int* parse_args(char *line, char **arg_ary) {
   char *curr = line;
   char *buffer;
@@ -28,6 +39,14 @@ int* parse_args(char *line, char **arg_ary) {
   return NULL;
 }
 
+/*
+  Description:
+    Executes a program via forking (or changing directory if the command is cd.)
+  Parameters:
+    char** args - Command + argument array to be executed.
+  Returns:
+    void
+*/
 void exec(char **args) {
   pid_t p;
   p = fork();
@@ -48,6 +67,14 @@ void exec(char **args) {
   wait(&status);
 }
 
+/*
+  Description:
+    Parses a line from stdin and performs any piping/redirect/execution
+  Parameters:
+    char* line - Line to be parsed
+  Returns:
+    0 if the execution is successful, errno if not.
+*/
 int parseCommands(char *line) {
   while(line != NULL) {
     char * secondCommand = NULL;

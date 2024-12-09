@@ -5,6 +5,14 @@
 #include <string.h>
 #include <unistd.h>
 
+/*
+  Description:
+    Changes the current directory.
+  Parameters:
+    char** args - Command + argument array.
+  Returns:
+    void
+*/
 void changeDir(char **args) {
   char *arg = args[1];
   if(arg == NULL) {
@@ -17,6 +25,16 @@ void changeDir(char **args) {
   }
 }
 
+/*
+  Description:
+    Redirects stdin/stdout.
+  Parameters:
+    char* path - Path for stdin/stdout to be redirected to
+    int redir - 0 if stdin, 1 if stdout
+  Returns
+    A dynamically-allocated array of the new file descriptor to the path and a backup
+    file descriptor of stdin/stdout.
+*/
 int* redirect(char *path, int redir) {
   int fd = -1;
   if (redir == 0) {
@@ -39,6 +57,17 @@ int* redirect(char *path, int redir) {
   return descrs;
 }
 
+/*
+  Description:
+    Check if a line contains a redirect mechanism and automatically terminates an argument
+    array with NULL if so.
+  Parameters:
+    char* buffer - The line to be parsed.
+    char** arg_ary - The command + argument array.
+    int i - The current index of the array.
+  Returns:
+    0 if stdin, 1 if stdout, -1 if no redirect mechanism is detected.
+*/
 int checkRedirect(char *buffer, char **arg_ary, int i) {
   if (strcmp(buffer, "<") == 0) {
     arg_ary[i] = NULL;

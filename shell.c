@@ -6,6 +6,14 @@
 
 #define LINE_SIZE 100
 
+/*
+  Description:
+    Prompts the user, reads from stdin (or a file), and executes commands.
+  Parameters:
+    None
+  Returns:
+    0 if successful, errno if not.
+*/
 int main() {
   char line[LINE_SIZE];
   while(1) {
