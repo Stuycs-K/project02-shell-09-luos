@@ -21,18 +21,9 @@ int* parse_args(char *line, char **arg_ary) {
   char *curr = line;
   char *buffer;
   int i = 0;
-  int redir = -1;
   while(curr != NULL) {
     buffer = strsep(&curr, " ");
-    if(redir != -1) {
-      int* descrs = redirect(buffer, redir);
-      return descrs;
-    }
-    redir = checkRedirect(buffer, arg_ary, i);
-
-    if(redir == -1) {
-      arg_ary[i] = buffer;
-    }
+    arg_ary[i] = buffer;
     i++;
   }
   arg_ary[i] = NULL;
@@ -67,6 +58,82 @@ void exec(char **args) {
   wait(&status);
 }
 
+int parseRedirect(char *line) {
+  char * command = NULL;
+  char * path = line;
+
+  int redir = -1;
+  printf("%s\n", path);
+  // https://stackoverflow.com/questions/12784766/check-substring-exists-in-a-string-in-c
+  if(strstr(path, " < ") != NULL) {
+    command = strsep(&path, " < ");
+    path = path + 2;
+    redir = 0;
+  }
+  else if(strstr(path, " > ") != NULL) {
+    command = strsep(&path, " > ");
+    path = path + 2;
+    redir = 1;
+  }
+  else if(strstr(path, "<") != NULL) {
+    command = strsep(&path, "<");
+    redir = 0;
+  }
+  else if(strstr(path, ">") != NULL) {
+    command = strsep(&path, " > ");
+    path = path + 2;
+    redir = 1;
+  }
+  else {
+    command = line;
+    path = NULL;
+  }
+
+  int* descrs = NULL;
+  if(path != NULL) {
+    redirect(path, redir);
+  }
+  char * args[16];
+  parse_args(command, args);
+  exec(args);
+  if(path != NULL) {
+    dup2(descrs[1], descrs[0]);
+    free(descrs);
+  }
+  return errno;
+}
+
+int parsePipe(char *line) {
+  char * command1 = NULL;
+  char * command2 = line;
+  // https://stackoverflow.com/questions/12784766/check-substring-exists-in-a-string-in-c
+  if(strstr(command2, " | ") != NULL) {
+    command1 = strsep(&command2, " | ");
+    command2 = command2 + 2;
+  }
+  else if(strstr(command2, "|") != NULL) {
+    command1 = strsep(&line, "|");
+  }
+  else {
+    command1 = line;
+    command2 = NULL;
+  }
+
+  int* descrs = NULL;
+  if(command2 != NULL) {
+    descrs = redirect("tf3301.txt", 1);
+  }
+  parseRedirect(command1);
+  if(command2 != NULL) {
+    dup2(descrs[1], descrs[0]);
+    descrs = redirect("tf3301.txt", 0);
+    parseRedirect(command2);
+    dup2(descrs[1], descrs[0]);
+    free(descrs);
+  }
+  return errno;
+}
+
 /*
   Description:
     Parses a line from stdin and performs any piping/redirect/execution
@@ -77,50 +144,8 @@ void exec(char **args) {
 */
 int parseCommands(char *line) {
   while(line != NULL) {
-    char * secondCommand = NULL;
-    secondCommand = strsep(&line, ";");
-
-    char * firstCommand = NULL;
-    // https://stackoverflow.com/questions/12784766/check-substring-exists-in-a-string-in-c
-    if(strstr(secondCommand, " | ") != NULL) {
-      firstCommand = strsep(&secondCommand, " | ");
-      secondCommand = secondCommand + 2;
-    }
-    else if(strstr(secondCommand, "|") != NULL) {
-      firstCommand = strsep(&secondCommand, "|");
-    }
-    else {
-      firstCommand = secondCommand;
-      secondCommand = NULL;
-    }
-
-    int* pipeDescrs = NULL;
-    if(secondCommand != NULL) {
-      pipeDescrs = redirect("tf3301.txt", 1);
-    }
-
-    char * args[16];
-    int* descrs = parse_args(firstCommand, args);
-    exec(args);
-    if(descrs != NULL) {
-      dup2(descrs[1], descrs[0]);
-    }
-
-    if(secondCommand != NULL) {
-      dup2(pipeDescrs[1], pipeDescrs[0]);
-      pipeDescrs = redirect("tf3301.txt", 0);
-      descrs = parse_args(secondCommand, args);
-      exec(args);
-      if(descrs != NULL) {
-        dup2(descrs[1], descrs[0]);
-        free(descrs);
-      }
-      dup2(pipeDescrs[1], pipeDescrs[0]);
-    }
-
-    if(pipeDescrs != NULL) {
-      free(pipeDescrs);
-    }
+    char * commandBlock = strsep(&line, ";");
+    parsePipe(commandBlock);
   }
   return errno;
 }
