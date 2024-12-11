@@ -4,8 +4,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/wait.h>
 
 /*
+  Name:
+    changeDir
   Description:
     Changes the current directory.
   Parameters:
@@ -26,14 +29,16 @@ void changeDir(char **args) {
 }
 
 /*
+  Name:
+    redirect
   Description:
-    Redirects stdin/stdout.
+    Redirects a file descriptor.
   Parameters:
     char* path - Path for stdin/stdout to be redirected to
-    int redir - 0 if stdin, 1 if stdout
+    int redir - 0 if stdin, 1 if stdout (technically can be any file descriptor)
   Returns
     A dynamically-allocated array of the new file descriptor to the path and a backup
-    file descriptor of stdin/stdout.
+    file descriptor of redir
 */
 int* redirect(char *path, int redir) {
   int fd = -1;
@@ -58,24 +63,31 @@ int* redirect(char *path, int redir) {
 }
 
 /*
+  Name:
+    exec
   Description:
-    Check if a line contains a redirect mechanism and automatically terminates an argument
-    array with NULL if so.
+    Executes a program via forking (or changing directory if the command is cd.)
   Parameters:
-    char* buffer - The line to be parsed.
-    char** arg_ary - The command + argument array.
-    int i - The current index of the array.
+    char** args - Command + argument array to be executed.
   Returns:
-    0 if stdin, 1 if stdout, -1 if no redirect mechanism is detected.
+    void
 */
-int checkRedirect(char *buffer, char **arg_ary, int i) {
-  if (strcmp(buffer, "<") == 0) {
-    arg_ary[i] = NULL;
-    return 0;
+void exec(char **args) {
+  pid_t p;
+  p = fork();
+  if (p < 0) {
+    perror("fork failed");
+    exit(1);
   }
-  else if (strcmp(buffer, ">") == 0) {
-    arg_ary[i] = NULL;
-    return 1;
+  else if (p == 0) {
+    if(strcmp(args[0], "cd") == 0) {
+      changeDir(args);
+    }
+    else {
+      execvp(args[0], args);
+    }
   }
-  return -1;
+
+  int status = 0;
+  wait(&status);
 }
