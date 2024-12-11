@@ -125,6 +125,7 @@ int parsePipe(char *line) {
   parseRedirect(command1);
   if(command2 != NULL) {
     dup2(descrs[1], descrs[0]);
+    free(descrs);
     descrs = redirect("tf3301.txt", 0);
     parseRedirect(command2);
     dup2(descrs[1], descrs[0]);
