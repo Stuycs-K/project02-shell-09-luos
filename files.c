@@ -26,14 +26,16 @@ void changeDir(char **args) {
 }
 
 /*
+  Name:
+    redirect
   Description:
-    Redirects stdin/stdout.
+    Redirects a file descriptor.
   Parameters:
     char* path - Path for stdin/stdout to be redirected to
-    int redir - 0 if stdin, 1 if stdout
+    int redir - 0 if stdin, 1 if stdout (technically can be any file descriptor)
   Returns
     A dynamically-allocated array of the new file descriptor to the path and a backup
-    file descriptor of stdin/stdout.
+    file descriptor of redir
 */
 int* redirect(char *path, int redir) {
   int fd = -1;
@@ -55,27 +57,4 @@ int* redirect(char *path, int redir) {
   descrs[0] = out;
   descrs[1] = backup;
   return descrs;
-}
-
-/*
-  Description:
-    Check if a line contains a redirect mechanism and automatically terminates an argument
-    array with NULL if so.
-  Parameters:
-    char* buffer - The line to be parsed.
-    char** arg_ary - The command + argument array.
-    int i - The current index of the array.
-  Returns:
-    0 if stdin, 1 if stdout, -1 if no redirect mechanism is detected.
-*/
-int checkRedirect(char *buffer, char **arg_ary, int i) {
-  if (strcmp(buffer, "<") == 0) {
-    arg_ary[i] = NULL;
-    return 0;
-  }
-  else if (strcmp(buffer, ">") == 0) {
-    arg_ary[i] = NULL;
-    return 1;
-  }
-  return -1;
 }
