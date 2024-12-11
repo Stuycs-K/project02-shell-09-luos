@@ -63,7 +63,6 @@ int parseRedirect(char *line) {
   char * path = line;
 
   int redir = -1;
-  printf("%s\n", path);
   // https://stackoverflow.com/questions/12784766/check-substring-exists-in-a-string-in-c
   if(strstr(path, " < ") != NULL) {
     command = strsep(&path, " < ");
@@ -80,7 +79,7 @@ int parseRedirect(char *line) {
     redir = 0;
   }
   else if(strstr(path, ">") != NULL) {
-    command = strsep(&path, " > ");
+    command = strsep(&path, ">");
     path = path + 2;
     redir = 1;
   }
@@ -91,7 +90,7 @@ int parseRedirect(char *line) {
 
   int* descrs = NULL;
   if(path != NULL) {
-    redirect(path, redir);
+    descrs = redirect(path, redir);
   }
   char * args[16];
   parse_args(command, args);
