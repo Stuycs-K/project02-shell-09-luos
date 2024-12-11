@@ -7,6 +7,8 @@
 #define LINE_SIZE 100
 
 /*
+  Name:
+    main
   Description:
     Prompts the user, reads from stdin (or a file), and executes commands.
   Parameters:

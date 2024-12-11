@@ -2,13 +2,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/wait.h>
 #include <unistd.h>
 #include "files.h"
 
 /*
   Name:
-    parse_args
+    parseArgs
   Description:
     Parses a line containing a command and arguments into an array
   Parameters:
@@ -17,7 +16,7 @@
   Returns:
     0 if the execution is successful, errno if not
 */
-int parse_args(char *line, char **arg_ary) {
+int parseArgs(char *line, char **arg_ary) {
   char *curr = line;
   char *buffer;
   int i = 0;
@@ -32,39 +31,9 @@ int parse_args(char *line, char **arg_ary) {
 
 /*
   Name:
-    exec
-  Description:
-    Executes a program via forking (or changing directory if the command is cd.)
-  Parameters:
-    char** args - Command + argument array to be executed.
-  Returns:
-    void
-*/
-void exec(char **args) {
-  pid_t p;
-  p = fork();
-  if (p < 0) {
-    perror("fork failed");
-    exit(1);
-  }
-  else if (p == 0) {
-    if(strcmp(args[0], "cd") == 0) {
-      changeDir(args);
-    }
-    else {
-      execvp(args[0], args);
-    }
-  }
-
-  int status = 0;
-  wait(&status);
-}
-
-/*
-  Name:
     parseRedirect
   Description:
-    Parses a line redirect file descriptors before executing commands
+    Parses a line and redirect file descriptors before executing commands
   Parameters:
     char* line - Line to be parsed
   Returns:
@@ -118,7 +87,7 @@ int parseRedirect(char *line) {
   Name:
     parsePipe
   Description:
-    Parses a line to execute two commands separately
+    Parses a line to execute two commands separately in a pipe
   Parameters:
     char* line - Line to be parsed
   Returns:
